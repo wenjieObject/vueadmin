@@ -21,10 +21,10 @@
       <!-- 用户列表区域 -->
       <el-table :data="rolelist" border stripe>
         <el-table-column type="index"></el-table-column>
-        <el-table-column label="ID" prop="SYS_ROLEINFOID"></el-table-column>
-        <el-table-column label="角色" prop="CNAME"></el-table-column>
+        <el-table-column label="ID" prop="SYS_ROLEINFOID" width="350px"></el-table-column>
+        <el-table-column label="角色" prop="CNAME" ></el-table-column>
 
-        <el-table-column label="操作" width="180px">
+        <el-table-column label="操作" >
           <template slot-scope="scope">
             <!-- 修改按钮 -->
             <el-button
