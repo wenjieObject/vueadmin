@@ -20,6 +20,39 @@
 
       <!-- 用户列表区域 -->
       <el-table :data="rolelist" border stripe>
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <el-row
+              :class="[item1.PROGRAMCODE==='1'?'bdbottom':'',i1===0?'bdtop':'']"
+              v-for="(item1,i1) in scope.row.Menuinfos"
+              :key="item1.SYS_PROGRAMID"
+            >
+              <!--一级权限-->
+              <el-col :span="5" v-if="item1.PROGRAMCODE==='1'">
+                <el-tag>{{item1.PROGRAMNAME}}</el-tag>
+                <i class="el-icon-caret-right"></i>
+              </el-col>
+              <!--二级和三级权限-->
+              <el-col :span="19">
+                <el-row v-for="(item2) in scope.row.Menuinfos" :key="item2.SYS_PROGRAMID">
+                  <!--二级权限-->
+                  <el-col
+                    :span="6"
+                    v-if="item2.PROGRAMCODE==='2' && item2.PROGRAMPARENT===item1.SYS_PROGRAMID"
+                  >
+                    <el-tag type="success">{{item2.PROGRAMNAME}}</el-tag>
+                    <i class="el-icon-caret-right"></i>
+                  </el-col>
+
+                  <!--三级权限-->
+                  <el-col :span="18">
+              
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
         <el-table-column type="index"></el-table-column>
         <el-table-column label="ID" prop="SYS_ROLEINFOID" width="350px"></el-table-column>
         <el-table-column label="角色" prop="CNAME"></el-table-column>
@@ -64,8 +97,6 @@
         :total="total"
       ></el-pagination>
     </el-card>
-
-    
   </div>
 </template> 
 
@@ -100,7 +131,7 @@ export default {
           }
           var mres = JSON.parse(res.data);
           self.total = mres.total;
-          self.rolelist = mres.roleInfos;
+          self.rolelist = mres.rolesAndMenus;
           self.$message("查询成功！");
         })
         .catch(function(error) {
@@ -123,29 +154,34 @@ export default {
     },
     //删除角色
     removeRoleById(id) {
-      this.$confirm(
-        "是否确认删除？",
-        "确认信息",
-        {
-          distinguishCancelAndClose: true,
-          confirmButtonText: "删除",
-          cancelButtonText: "取消"
-        }
-      )
+      this.$confirm("是否确认删除？", "确认信息", {
+        distinguishCancelAndClose: true,
+        confirmButtonText: "删除",
+        cancelButtonText: "取消"
+      })
         .then(() => {
-          this.$message({type: "info",message: "您无权删除！"});
+          this.$message({ type: "info", message: "您无权删除！" });
         })
         .catch(action => {
-          this.$message({type: "info",message: "放弃并离开页面"});
+          this.$message({ type: "info", message: "放弃并离开页面" });
         });
     },
     //分配权限
-    setRole(row){
-
-    }
+    setRole(row) {}
   }
 };
 </script>
 
 <style  scoped>
+.el-tag {
+  margin: 7px;
+}
+
+.bdbottom {
+  border-bottom: 1px solid #eee;
+}
+
+.bdtop {
+  border-top: 1px solid #eee;
+}
 </style>
