@@ -22,23 +22,23 @@
       <el-table :data="rolelist" border stripe>
         <el-table-column type="index"></el-table-column>
         <el-table-column label="ID" prop="SYS_ROLEINFOID" width="350px"></el-table-column>
-        <el-table-column label="角色" prop="CNAME" ></el-table-column>
+        <el-table-column label="角色" prop="CNAME"></el-table-column>
 
-        <el-table-column label="操作" >
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <!-- 修改按钮 -->
             <el-button
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              @click="showEditDialog(scope.row.id)"
+              @click="showEditDialog(scope.row.SYS_ROLEINFOID)"
             ></el-button>
             <!-- 删除按钮 -->
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
-              @click="removeUserById(scope.row.id)"
+              @click="removeRoleById(scope.row.SYS_ROLEINFOID)"
             ></el-button>
             <!-- 分配角色按钮 -->
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
@@ -64,6 +64,8 @@
         :total="total"
       ></el-pagination>
     </el-card>
+
+    
   </div>
 </template> 
 
@@ -107,13 +109,39 @@ export default {
     },
     //每页数量修改
     handleSizeChange(newSize) {
-      this.queryInfo.pageSize = newSize;
+      this.queryInfo.pagesize = newSize;
       this.GetRoles();
     },
     //分页
     handleCurrentChange(newPage) {
       this.queryInfo.pagenum = newPage;
       this.GetRoles();
+    },
+    //修改弹框
+    showEditDialog(id) {
+      this.$message("您无权修改！");
+    },
+    //删除角色
+    removeRoleById(id) {
+      this.$confirm(
+        "是否确认删除？",
+        "确认信息",
+        {
+          distinguishCancelAndClose: true,
+          confirmButtonText: "删除",
+          cancelButtonText: "取消"
+        }
+      )
+        .then(() => {
+          this.$message({type: "info",message: "您无权删除！"});
+        })
+        .catch(action => {
+          this.$message({type: "info",message: "放弃并离开页面"});
+        });
+    },
+    //分配权限
+    setRole(row){
+
     }
   }
 };
