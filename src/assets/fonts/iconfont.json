@@ -1,0 +1,100 @@
+{
+  "id": "1598284",
+  "name": "vueDemp",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "8468",
+      "name": "我的资产",
+      "font_class": "wodezichan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "973134",
+      "name": "dianpu",
+      "font_class": "dianpu",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "1359499",
+      "name": "监控统计",
+      "font_class": "tongji",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "6152335",
+      "name": "huiyuan",
+      "font_class": "huiyuan",
+      "unicode": "e661",
+      "unicode_decimal": 58977
+    },
+    {
+      "icon_id": "8106219",
+      "name": "edit",
+      "font_class": "edit",
+      "unicode": "e69a",
+      "unicode_decimal": 59034
+    },
+    {
+      "icon_id": "8106227",
+      "name": "home",
+      "font_class": "home",
+      "unicode": "e69b",
+      "unicode_decimal": 59035
+    },
+    {
+      "icon_id": "8106228",
+      "name": "favoriteslist",
+      "font_class": "favoriteslist",
+      "unicode": "e69c",
+      "unicode_decimal": 59036
+    },
+    {
+      "icon_id": "8106288",
+      "name": "nickname",
+      "font_class": "nickname",
+      "unicode": "e6a0",
+      "unicode_decimal": 59040
+    },
+    {
+      "icon_id": "8348195",
+      "name": "汉堡",
+      "font_class": "Hamburger",
+      "unicode": "e61b",
+      "unicode_decimal": 58907
+    },
+    {
+      "icon_id": "10678400",
+      "name": "book resource",
+      "font_class": "bookresource",
+      "unicode": "e6db",
+      "unicode_decimal": 59099
+    },
+    {
+      "icon_id": "10678403",
+      "name": "address list",
+      "font_class": "addresslist",
+      "unicode": "e6dc",
+      "unicode_decimal": 59100
+    },
+    {
+      "icon_id": "10678423",
+      "name": "calling robort",
+      "font_class": "callingrobort",
+      "unicode": "e6de",
+      "unicode_decimal": 59102
+    },
+    {
+      "icon_id": "10678449",
+      "name": "schedule",
+      "font_class": "schedule",
+      "unicode": "e6e2",
+      "unicode_decimal": 59106
+    }
+  ]
+}
