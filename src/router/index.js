@@ -7,6 +7,7 @@ import Welcome from '../components/Welcome.vue'
 import Error from '../components/Error.vue'
 import OeeTeam from '../components/oee/OeeTeam.vue'
 import Roles from '../components/user/Roles.vue'
+import RoleMenu from '../components/user/RoleMenu.vue'
 
 Vue.use(Router)
 
@@ -16,14 +17,14 @@ var router= new Router({
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
     {
-      path: '/Home', component: Home,
-      redirect:'/welcome',
+      path: '/Home', component: Home,redirect:'/welcome',
       children: [
         { path: '/search', component: Search },
         { path: '/welcome', component: Welcome },
         { path: '/error', component: Error },
         { path: '/oeeTeam', component: OeeTeam },
         { path: '/roles', component: Roles },
+        { path: '/roleMenu', component: RoleMenu },
       ]
     },
   ]

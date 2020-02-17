@@ -121,6 +121,11 @@ export default {
       child03.id = "/roles";
       childrenMenu03.push(child03);
 
+      var child03_2 = {};
+      child03_2.name = "角色菜单";
+      child03_2.id = "/roleMenu";
+      childrenMenu03.push(child03_2);
+
       menu03.id = "3";
       menu03.name = "用户角色";
       menu03.children = childrenMenu03;
