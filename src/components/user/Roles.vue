@@ -16,6 +16,10 @@
         <el-col :span="2">
           <el-button type="primary" @click="GetRoles">查询</el-button>
         </el-col>
+
+        <el-col :span="4">
+          <el-button type="info" round @click="getMenus">测试级联选择</el-button>
+        </el-col>
       </el-row>
 
       <!-- 用户列表区域 -->
@@ -45,9 +49,7 @@
                   </el-col>
 
                   <!--三级权限-->
-                  <el-col :span="18">
-              
-                  </el-col>
+                  <el-col :span="18"></el-col>
                 </el-row>
               </el-col>
             </el-row>
@@ -97,6 +99,26 @@
         :total="total"
       ></el-pagination>
     </el-card>
+
+    <el-dialog title="级联选择" :visible.sync="dialogFormVisible" >
+      <el-form>
+        <el-form-item label="菜单名称" label-width="80px">
+          <el-input autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="菜单选择" label-width="80px">
+          <el-cascader
+            v-model="cascaderValue"
+            :props="cascaderProps"
+            :options="cascaderData"
+            @change="cascaderChange"
+          ></el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template> 
 
@@ -112,7 +134,17 @@ export default {
         pagesize: 8
       },
       total: 0,
-      rolelist: []
+      rolelist: [],
+      dialogFormVisible: false,
+      //选中的数据
+      cascaderValue: [],
+      //下拉数据源
+      cascaderData: [],
+      cascaderProps: {
+        value: "SYS_PROGRAMID",
+        label: "PROGRAMNAME",
+        children: "MenuChildren"
+      }
     };
   },
   methods: {
@@ -167,7 +199,29 @@ export default {
         });
     },
     //分配权限
-    setRole(row) {}
+    setRole(row) {},
+    //获取级联选择数据
+    async getMenus() {
+      var self = this;
+      await axios
+        .get("http://localhost:4620/api/values/GetMenus")
+        .then(function(res) {
+          if (res.status != "200") {
+            self.$message.error("服务器异常，请稍后重试");
+            return;
+          }
+          var mres = JSON.parse(res.data);
+          self.cascaderData = mres;
+          self.dialogFormVisible = true;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    //级联修改
+    cascaderChange() {
+      console.log(this.cascaderValue);
+    }
   }
 };
 </script>
@@ -183,5 +237,9 @@ export default {
 
 .bdtop {
   border-top: 1px solid #eee;
+}
+
+.el-cascader{
+  width: 100%;
 }
 </style>
