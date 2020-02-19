@@ -120,7 +120,13 @@ export default {
     },
 
     //选择tab页面
-    handleClick(tab, event) {}
+    handleClick(tab, event) {},
+    handleEdit(){
+
+    },
+    handleDelete(){
+      
+    }
   }
 };
 </script>
