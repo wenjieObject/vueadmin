@@ -13,10 +13,12 @@
     "axios": "^0.19.1",
     "echarts": "^4.6.0",
     "element-ui": "^2.13.0",
+    "file-saver": "^2.0.2",
     "v-charts": "^1.19.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
-    "vue-schart": "^2.0.0"
+    "vue-schart": "^2.0.0",
+    "xlsx": "^0.15.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

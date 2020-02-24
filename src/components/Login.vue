@@ -39,8 +39,8 @@ export default {
     return {
       // 登录表单数据对象
       loginForm: {
-        userName: "admin",
-        passWord: "123456@"
+        userName: "",
+        passWord: ""
       },
 
       loginRules: {
@@ -107,7 +107,7 @@ export default {
 .avatar_box {
   height: 130px;
   width: 130px;
-  border: 1 solid #eee;
+  border: 1 solid rgb(209, 199, 199);
   border-radius: 50%;
   box-shadow: 0 0 10px #ddd;
   position: absolute;
