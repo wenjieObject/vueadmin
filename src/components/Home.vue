@@ -102,6 +102,7 @@ export default {
       menu.children = childrenMenu;
 
       var menu02 = {};
+
       var child02 = {};
       var childrenMenu02 = [];
 
@@ -109,9 +110,15 @@ export default {
       child02.id = "/oeeTeam";
       childrenMenu02.push(child02);
 
+      var child02_2 = {};
+
+      child02_2.name = "OEE修正";
+      child02_2.id = "/oeeCalc";
+      childrenMenu02.push(child02_2);
+
       menu02.id = "2";
       menu02.name = "OEE管理";
-      menu02.children = childrenMenu02;
+      menu02.children=childrenMenu02;
 
       var menu03 = {};
       var child03 = {};
@@ -147,7 +154,7 @@ export default {
   height: 100%;
 }
 .main_container {
-  height: 80%;
+  height: 100%;
 }
 
 .el-header {
