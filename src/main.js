@@ -16,10 +16,10 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
 //正式环境
-//axios.defaults.baseURL='http://10.60.4.103:8090/api'
+axios.defaults.baseURL='http://10.60.4.103:8090/api'
 
 //调试环境
-axios.defaults.baseURL='http://localhost:4620/api'
+//axios.defaults.baseURL='http://localhost:4620/api'
 
 //在发起请求之前，给请求头添加token
 axios.interceptors.request.use(config=>{

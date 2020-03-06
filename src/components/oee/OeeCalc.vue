@@ -8,8 +8,10 @@
     </el-breadcrumb>
 
     <el-card>
-      <el-alert title="补录停机时间不会自动重新计算oee！如需重计算请在下方第二个页面操作" type="warning" show-icon></el-alert>
-      <el-tabs v-model="activeName">
+      <el-alert v-if="activeName=='shutdown'" title="补录停机时间不会自动重新计算oee！如需重计算请在下方第二个页面操作" type="warning" show-icon></el-alert>
+      <el-alert v-else title="日期必须输入，工作中心与加工中心可选，如两个都不选，那么将重新计算当天的OEE，如果选中工作中心那么将重计算当天工作中心的OEE" type="info" show-icon></el-alert>
+
+      <el-tabs v-model="activeName"  @tab-click="handleTabClick">
         <el-tab-pane label="停机时长补录" name="shutdown">
           <el-row :gutter="20">
             <el-col :span="4">
@@ -33,7 +35,7 @@
             </el-col>
 
             <el-col :span="2">
-              <el-button type="primary" @click="getMachinedown">查询</el-button>
+              <el-button type="primary" @click="getMachinedownBtn">查询</el-button>
             </el-col>
             <el-col :span="2">
               <el-button type="warning" @click="addMachinedown">补录</el-button>
@@ -41,7 +43,7 @@
           </el-row>
 
           <!-- 表格区域 -->
-          <el-table :data="machinedownData" style="width: 100%" stripe border>
+          <el-table :data="machinedownData" height="400" style="width: 100%" stripe border>
             <el-table-column prop="em_name" label="设备名称" width="240"></el-table-column>
             <el-table-column prop="begintime" label="开始时间" width="240"></el-table-column>
             <el-table-column prop="endtime" label="结束时间" width="240"></el-table-column>
@@ -127,7 +129,59 @@
           <!-- 弹出框 -->
         </el-tab-pane>
 
-        <el-tab-pane label="OEE重计算" name="oee"></el-tab-pane>
+        <el-tab-pane label="OEE重计算" name="oee">
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-form ref="form" label-width="80px">
+                <el-form-item label="工作中心">
+                  <el-select v-model="reworkshop" clearable @change="changeWorkshop" placeholder="请选择">
+                    <el-option
+                      v-for="item in reworkshops"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="加工中心">
+                  <el-select v-model="remachine" clearable filterable placeholder="请选择">
+                    <el-option
+                      v-for="item in remachines"
+                      :key="item.VALUEX"
+                      :label="item.DESCX"
+                      :value="item.VALUEX"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="日期">
+                  <el-date-picker v-model="redatepick" type="date" placeholder="选择日期"></el-date-picker>
+                </el-form-item>
+
+                <el-form-item>
+                  <el-button type="primary" @click="requeryOee">查询</el-button>
+
+                  <el-button type="danger" @click="reCalculateOeeData">重计算</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+
+            <el-col :span="18">
+              <!-- 表格区域 -->
+              <el-table class="oeetable" :data="oeeDatas" height="480" style="width: 100%" stripe border>
+                <el-table-column prop="WORKSHOP_NAME" label="工序" width="120"></el-table-column>
+                <el-table-column prop="MACHING_CENTER_NAME" label="机台" width="240"></el-table-column>
+                <el-table-column prop="RQ" label="日期" width="120"></el-table-column>
+                <el-table-column prop="JH" label="计划" width="80"></el-table-column>
+                <el-table-column prop="FJH" label="非计划" width="80"></el-table-column>
+                <el-table-column prop="ACTQTY" label="实际产量" width="100"></el-table-column>
+                <el-table-column prop="TASKQTY" label="理论产量" width="100"></el-table-column>
+                <el-table-column prop="FSQTY" label="废丝" width="100"></el-table-column>
+              </el-table>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
@@ -165,15 +219,51 @@ export default {
         EQUIPMENTID: "",
         pageIndex: 1,
         pageSize: 5
-      }
+      },
+      redatepick: "",
+      reworkshops: [
+        {
+          value: "WORKSHOP003",
+          label: "倒拉工作中心"
+        },
+        {
+          value: "WORKSHOP004",
+          label: "大拉工作中心"
+        },
+        {
+          value: "WORKSHOP005",
+          label: "中拉工作中心"
+        },
+        {
+          value: "WORKSHOP007",
+          label: "电镀工作中心"
+        },
+        {
+          value: "WORKSHOP009",
+          label: "小拉工作中心"
+        },
+        {
+          value: "WORKSHOP010",
+          label: "半自动小拉工作中心"
+        }
+      ],
+      reworkshop: "",
+      remachines: [],
+      remachine: "",
+      oeeDatas: []
     };
   },
   created() {
     this.getShutdownCodes();
     this.getMachings();
-    this.getMachinedown();
+    this.getMachingcenters();
   },
   methods: {
+    getMachinedownBtn() {
+      this.queryInfo.pageIndex = 1;
+      this.getMachinedown();
+    },
+
     async getMachinedown() {
       if (this.datepick.length > 1) {
         this.queryInfo.BEGINTIME = this.format(this.datepick[0]);
@@ -221,6 +311,7 @@ export default {
           if (res.ResCode === "200") {
             this.$message.success(res.ResMsg);
             this.dialogFormVisible = false;
+            this.getMachinedownBtn();
             return;
           } else {
             this.$message.error(res.ResMsg);
@@ -273,6 +364,23 @@ export default {
       var data = JSON.parse(res.data);
       this.machines = data;
     },
+
+    changeWorkshop() {
+      this.remachine = "";
+      this.getMachingcenters();
+    },
+    //获取加工中心
+    async getMachingcenters() {
+      var res = await this.$http.get("/OeeFix/GetMachingcenters", {
+        params: { workshop_no: this.reworkshop }
+      });
+      if (res.status != "200") {
+        this.$message.error("服务器异常，请稍后重试");
+        return;
+      }
+      var data = JSON.parse(res.data);
+      this.remachines = data;
+    },
     //
     handleSizeChange(newSize) {
       this.queryInfo.pageSize = newSize;
@@ -282,7 +390,85 @@ export default {
       this.getMachinedown();
     },
 
-    handleDelete(row) {}
+    handleDelete(row) {
+      this.$confirm("此操作将永久删除该记录, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          var res = await this.$http.post("/OeeFix/DeleteShutDownTime", {
+            data: row.id
+          });
+          if (res.status != "200") {
+            this.$message.error("服务器异常，请稍后重试");
+            return;
+          }
+          var res = JSON.parse(res.data);
+          if (res.ResCode === "200") {
+            this.getMachinedownBtn();
+            this.$message.success(res.ResMsg);
+            return;
+          } else {
+            this.$message.error(res.ResMsg);
+            return;
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    },
+    async reCalculateOeeData() {
+      if (this.redatepick === "" || !this.redatepick) {
+        this.$message.error("日期必须输入！");
+        return;
+      }
+      var rq = this.format(this.redatepick);
+      rq = rq.substring(0, 10);
+      var res = await this.$http.post("/OeeFix/ReCalculateOeeData", {
+        data: {
+          rq: rq,
+          workshop: this.reworkshop,
+          machine: this.remachine
+        }
+      });
+      if (res.status != "200") {
+        this.$message.error("服务器异常，请稍后重试");
+        return;
+      }
+      var res = JSON.parse(res.data);
+      if (res.ResCode === "200") {
+        this.requeryOee();
+        this.$message.success(res.ResMsg);
+        return;
+      } else {
+        this.$message.error(res.ResMsg);
+        return;
+      }
+    },
+    async requeryOee() {
+      if (this.redatepick === "" || !this.redatepick) {
+        this.$message.error("日期必须输入！");
+        return;
+      }
+      var rq = this.format(this.redatepick);
+      rq = rq.substring(0, 10);
+      var res = await this.$http.get("/OeeFix/GetOeedatas", {
+        params: { rq: rq, workshop: this.reworkshop, machine: this.remachine }
+      });
+      if (res.status != "200") {
+        this.$message.error("服务器异常，请稍后重试");
+        return;
+      }
+      var data = JSON.parse(res.data);
+      this.oeeDatas = data;
+    },
+    handleTabClick(tab){
+      
+    }
   }
 };
 </script>
@@ -290,5 +476,8 @@ export default {
 <style  scoped>
 .el-alert {
   margin: 0px 0px;
+}
+.oeetable{
+  margin-top:3px 
 }
 </style>
