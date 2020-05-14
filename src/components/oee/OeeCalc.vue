@@ -1,11 +1,6 @@
 <template>
   <div>
-    <!-- 面包屑导航 -->
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>OEE管理</el-breadcrumb-item>
-      <el-breadcrumb-item>OEE修正</el-breadcrumb-item>
-    </el-breadcrumb>
+ 
 
     <el-card>
       <el-alert v-if="activeName=='shutdown'" title="补录停机时间不会自动重新计算oee！如需重计算请在下方第二个页面操作" type="warning" show-icon></el-alert>

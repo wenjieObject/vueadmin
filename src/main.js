@@ -38,7 +38,7 @@ Vue.prototype.$http = axios;
 var commonFunc = function () {
   return {
     getUserByCookie: function (cookie_userId) {
-      debugger
+      //debugger
       var allcookies = document.cookie;
       var cookie_pos = allcookies.indexOf(cookie_userId); //索引的长度
       var value=''

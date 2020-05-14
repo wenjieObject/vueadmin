@@ -35,7 +35,7 @@
                 :index="subitem.id"
                 v-for="subitem in item.children"
                 :key="subitem.id"
-                @click="saveNavState(subitem.id)"
+                @click="saveNavState(subitem)"
               >
                 <template slot="title">
                   <i class="el-icon-tickets"></i>
@@ -48,7 +48,27 @@
 
         <!-- 右侧主体区域 -->
         <el-main>
-          <router-view></router-view>
+          <div class="vol-path">
+            <ul class="header-navigation">
+              <li
+                :class="item.id==activePath?'header-navigation-li-active':'header-navigation-li'"
+                v-for="(item,navIndex) in navigation"
+                :key="navIndex"
+                @click="selectNav(item.id)"
+              >
+                {{item.name}}
+                <i
+                  @click="removeNav(item.id)"
+                  v-if="navIndex!=0"
+                  class="el-icon-close"
+                  @click.stop
+                />
+              </li>
+            </ul>
+          </div>
+          <keep-alive>
+            <router-view></router-view>
+          </keep-alive>
         </el-main>
       </el-container>
     </el-container>
@@ -66,7 +86,8 @@ export default {
       menuList: [],
       isCollapse: false,
       //激活的菜单
-      activePath: ""
+      activePath: "/welcome",
+      navigation: [{ name: "首页", id: "/welcome", path: "/welcome" }]
     };
   },
 
@@ -79,10 +100,54 @@ export default {
     toggleCollapse() {
       this.isCollapse = !this.isCollapse;
     },
-    saveNavState(mActivePath) {
-      window.sessionStorage.setItem("activePath", mActivePath);
-      this.activePath = mActivePath;
+    //id (path),name(中文)
+    //选中菜单后，将选中项加入数组
+    saveNavState(subitem) {
+      window.sessionStorage.setItem("activePath", subitem.id);
+
+      if (subitem.id == this.activePath) return;
+      var hasId = this.navigation.find(function(x) {
+        return x.id == subitem.id;
+      });
+      if (hasId && hasId.id == this.activePath) return;
+
+      if (!hasId) {
+        this.navigation.push({
+          id: subitem.id,
+          name: subitem.name,
+          path: subitem.id
+        });
+      }
+      this.activePath = subitem.id;
     },
+
+    //点击页面上的标签
+    selectNav(path) {
+      this.activePath = path;
+      this.$router.push({
+        path: path
+      });
+    },
+
+    removeNav(path) {
+      var _index = -1;
+      this.navigation.forEach((item, index) => {
+        if (item.id == path) {
+          _index = index;
+          return;
+        }
+      });
+      if (_index == -1) {
+        return this.$message("菜单关闭发生错误");
+      }
+      var navItem = this.navigation[_index - 1];
+      this.activePath = navItem.id;
+      this.navigation.splice(_index, 1);
+      this.$router.push({
+        path: navItem.id
+      });
+    },
+
     getFakeMenu() {
       var child = {};
       var child01 = {};
@@ -118,7 +183,7 @@ export default {
 
       menu02.id = "2";
       menu02.name = "OEE管理";
-      menu02.children=childrenMenu02;
+      menu02.children = childrenMenu02;
 
       var menu03 = {};
       var child03 = {};
@@ -144,7 +209,7 @@ export default {
   },
   created: function() {
     this.getFakeMenu();
-    this.activePath = window.sessionStorage.getItem("activePath");
+    this.activePath = "/welcome"; //window.sessionStorage.getItem("activePath");
   }
 };
 </script>
@@ -183,6 +248,7 @@ span {
   border: 0;
 }
 .el-main {
+  padding: 0;
   background-color: #eaedf1;
   padding-left: 10px;
   padding-right: 10px;
@@ -193,6 +259,60 @@ span {
   color: #ffffff;
   text-align: center;
   cursor: pointer;
+}
+
+.vol-path {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-top: 1px solid #e4e4e4;
+  border-bottom: 2px solid #eee;
+  /* z-index: 1; */
+}
+
+.header-navigation {
+  cursor: pointer;
+  box-shadow: 3px 0px 6px #f6f7f7;
+  border-bottom: 1px solid #eee;
+  /* // border-top: 1px solid #eee; */
+  height: 32px;
+  overflow: hidden;
+  line-height: 32px;
+  display: block;
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  list-style: none;
+  position: relative;
+  z-index: 900;
+  font-weight: initial;
+}
+.header-navigation li {
+  position: relative;
+  float: left;
+  padding: 0 20px;
+  min-width: 80px;
+  border-right: 1px solid #eee;
+  border-radius: 10px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+.header-navigation li .el-icon-close {
+  top: 5px;
+  position: absolute;
+  right: 6px;
+}
+
+.header-navigation-li-active {
+  background-color: lightblue;
+}
+
+.header-navigation-li {
+  background-color: white;
 }
 </style>
 
